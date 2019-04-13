@@ -1,6 +1,6 @@
-# parrot
+# parrot_pronunciation_app
 
-A new Flutter project.
+Parrot Application for Pronunciation Practice
 
 ## Getting Started
 

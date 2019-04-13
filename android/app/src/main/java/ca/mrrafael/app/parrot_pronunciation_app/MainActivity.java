@@ -1,4 +1,4 @@
-package com.example.parrot;
+package ca.mrrafael.app.parrot_pronunciation_app;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
