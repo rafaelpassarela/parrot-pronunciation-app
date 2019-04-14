@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:parrot_pronunciation_app/localization/localization.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -45,7 +46,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text(LocalizationController.of(context).appTitle) // Text(widget.title),
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
@@ -68,12 +69,18 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'You have pushed the button this many times:',
+              LocalizationController.of(context).test,
+              //'You have pushed the button this many times:',
             ),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.display1,
             ),
+            IconButton(
+                icon: Icon(Icons.local_airport),
+                onPressed: null,
+            ),
+
           ],
         ),
       ),
