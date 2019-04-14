@@ -1,10 +1,15 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show SynchronousFuture;
+import 'package:parrot_pronunciation_app/localization/localization.en.dart';
+import 'package:parrot_pronunciation_app/localization/localization.pt.dart';
 
 class LocalizationController {
 
   LocalizationController(this.locale);
+
+  static const String defaultLang = 'en';
+  static const availableLangs = ['en', 'pt'];
 
   final Locale locale;
   static BuildContext _context;
@@ -19,7 +24,7 @@ class LocalizationController {
       var tmp =Localizations.of<LocalizationController>(_context, LocalizationController);
 
       if (tmp == null) {
-        tmp = new LocalizationController(new Locale('en', 'CA'));
+        tmp = new LocalizationController(new Locale(defaultLang, ''));
         _context = null;
       }
 
@@ -27,38 +32,38 @@ class LocalizationController {
 
     } catch (e) {
       print(e.toString());
-      return new LocalizationController(new Locale('en', 'CA'));
+      return new LocalizationController(new Locale(defaultLang, ''));
     }
   }
 
   static Map<String, Map<String, String>> _localizedValues = {
-    // EN Localizations
-    'en': {
-      'appTitle': 'Parrot - Practice the Pronunciation',
-      'test': 'Your total clicks is:'
-    },
-    // PT Localizations
-    'pt': {
-      'appTitle': 'Papagaio - Pratique a Pronúncia',
-      'test': 'Seu total de clicadas é:'
-    },
+    'en': enLocalization,
+    'pt': ptLocalization,
   };
 
+  String _doGetLocalizedText(String id) {
+    String langCode = locale.languageCode;
+
+    // My default language is EN
+    langCode = (availableLangs.contains(langCode)) ? langCode : defaultLang;
+
+    return _localizedValues[langCode][id];
+  }
+
   String get appTitle {
-    return _localizedValues[locale.languageCode]['appTitle'];
+    return _doGetLocalizedText('appTitle');
   }
 
   String get test {
-    return _localizedValues[locale.languageCode]['test'];
+    return _doGetLocalizedText('test');
   }
 }
 
-class MyLocalizationDelegate
-    extends LocalizationsDelegate<LocalizationController> {
+class MyLocalizationDelegate extends LocalizationsDelegate<LocalizationController> {
   const MyLocalizationDelegate();
 
   @override
-  bool isSupported(Locale locale) => ['en', 'pt'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => LocalizationController.availableLangs.contains(locale.languageCode);
 
   @override
   Future<LocalizationController> load(Locale locale) {
