@@ -46,7 +46,16 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
-        title: Text(LocalizationController.of(context).appTitle) // Text(widget.title),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset('assets/icon.png', fit: BoxFit.cover, height: 32),
+            Container(
+              padding: const EdgeInsets.all(8.0), child: Text(LocalizationController.of(context).appTitle),
+            )
+          ],
+        )
+
       ),
       body: Center(
         // Center is a layout widget. It takes a single child and positions it

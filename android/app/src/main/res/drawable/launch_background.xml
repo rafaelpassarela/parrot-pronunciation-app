@@ -12,6 +12,7 @@
     <item>
         <bitmap
             android:gravity="center"
+            android:tileMode="disabled"
             android:src="@mipmap/splash_image" />
     </item>
 </layer-list>
