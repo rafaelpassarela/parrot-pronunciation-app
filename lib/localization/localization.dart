@@ -50,12 +50,17 @@ class LocalizationController {
     return _localizedValues[langCode][id];
   }
 
+  // One function to each translated text
   String get appTitle {
     return _doGetLocalizedText('appTitle');
   }
 
-  String get test {
-    return _doGetLocalizedText('test');
+  String get inputWord {
+    return _doGetLocalizedText('inputWord');
+  }
+
+  String get inputHint {
+    return _doGetLocalizedText('inputHint');
   }
 }
 

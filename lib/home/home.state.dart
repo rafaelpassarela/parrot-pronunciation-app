@@ -22,6 +22,26 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _counter = 0;
+  bool _canSpeak = false;
+
+  TextEditingController textControllerInputWord = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    textControllerInputWord.addListener( () {
+      bool isEmpty = textControllerInputWord.text.isEmpty;
+
+      // if you can speak, but the new text is invalid
+      // or if you can't speak but the text is valid, refresh the state
+      if ((_canSpeak && isEmpty) || ( !_canSpeak && !isEmpty) ) {
+        setState(() {
+          _canSpeak = !isEmpty;
+        });
+      }
+    });
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -36,27 +56,23 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('assets/icon.png', fit: BoxFit.cover, height: 32),
             Container(
-              padding: const EdgeInsets.all(8.0), child: Text(LocalizationController.of(context).appTitle),
+              padding: const EdgeInsets.all(8.0),
+              child: Text(LocalizationController.of(context).appTitle),
             )
           ],
         )
-
       ),
+
       body: Center(
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
@@ -77,17 +93,23 @@ class _HomePageState extends State<HomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              LocalizationController.of(context).test,
-              //'You have pushed the button this many times:',
-            ),
+            _buildInputTextField(),
+
+            RaisedButton(
+              onPressed: (_canSpeak) ? _speechText : null,
+              child: Icon(Icons.volume_up),
+              ),
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.display1,
             ),
             IconButton(
-                icon: Icon(Icons.local_airport),
-                onPressed: null,
+              icon: Icon(Icons.mic),
+              onPressed: null,
+            ),
+            IconButton(
+              icon: Icon(Icons.forum),
+              onPressed: null,
             ),
 
           ],
@@ -99,5 +121,27 @@ class _HomePageState extends State<HomePage> {
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+  Widget _buildInputTextField() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: TextField(
+        autofocus: true,
+        maxLines: null, // maxLines = NULL: adds new lines when the current line reaches the line character limit
+        cursorColor: Colors.green,
+        controller: textControllerInputWord,
+        decoration: InputDecoration(
+          labelText: LocalizationController.of(context).inputWord,
+          helperText: LocalizationController.of(context).inputHint,
+          //border: OutlineInputBorder(),
+        ),
+
+      ),
+    );
+  }
+
+  void _speechText() {
+
   }
 }

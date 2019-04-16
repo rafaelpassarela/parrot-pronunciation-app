@@ -1,4 +1,5 @@
 const Map<String, String> enLocalization = const {
   'appTitle': 'Parrot - Practice the Pronunciation',
-  'test': 'Your total clicks is: '
+  'inputWord': 'Enter the Word or Phrase',
+  'inputHint': 'Click the button below and listen carefully',
 };
