@@ -25,11 +25,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  TextEditingController textControllerInputWord = TextEditingController();
+  TextEditingController _textControllerInputWord = TextEditingController();
+  TtsController _ttsController;
+  bool _isPlaying = false;
 
   @override
   void initState() {
     super.initState();
+    _ttsController = new TtsController(statusCallback: _statusCallback);
+    _ttsController.initTts();
   }
 
   @override
@@ -66,26 +70,13 @@ class _HomePageState extends State<HomePage> {
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
           child: Column(
-            // Column is also layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               _buildInputTextField(),
 
               CircularButton(
-                onPressed: _speechText,
+                onPressed: (_isPlaying) ? null : _speechText,
+                btnColor: (_isPlaying) ? Colors.black38 : Colors.green,
                 icon: Icons.volume_up,
               ),
               IconButton(
@@ -100,23 +91,18 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
     );
   }
 
   Widget _buildInputTextField() {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.only(bottom: 5, left: 20, right: 20, top: 20),
       child: TextField(
         autofocus: true,
         // maxLines = NULL: adds new lines when the current line reaches the line character limit
         maxLines: null,
         cursorColor: Colors.green,
-        controller: textControllerInputWord,
+        controller: _textControllerInputWord,
         decoration: InputDecoration(
           labelText: LocalizationController.of(context).inputWord,
           helperText: LocalizationController.of(context).inputHint,
@@ -127,13 +113,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _speechText() {
-    if (textControllerInputWord.text.isEmpty) {
+    if (_textControllerInputWord.text.isEmpty) {
       Fluttertoast.showToast(
         msg: LocalizationController.of(context).invalidTextInput,
         toastLength: Toast.LENGTH_LONG,
         backgroundColor: Colors.red[300],
       );
       return null;
+    }
+
+    _ttsController.speak(_textControllerInputWord.text);
+  }
+
+  void _statusCallback(TtsCallbackStatus status) {
+
+    print(status.toString());
+
+    if (status == TtsCallbackStatus.error) {
+      Fluttertoast.showToast(
+        msg: _ttsController.lastError,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red[300],
+      );
+    } else {
+      setState(() {
+        _isPlaying = _ttsController.isPlaying;
+      });
     }
   }
 
