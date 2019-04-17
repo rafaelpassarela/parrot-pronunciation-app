@@ -62,6 +62,10 @@ class LocalizationController {
   String get inputHint {
     return _doGetLocalizedText('inputHint');
   }
+
+  String get invalidTextInput {
+    return _doGetLocalizedText('invalidTextInput');
+  }
 }
 
 class MyLocalizationDelegate extends LocalizationsDelegate<LocalizationController> {

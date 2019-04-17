@@ -25,29 +25,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  int _counter = 0;
-  bool _canSpeak = false;
-
   TextEditingController textControllerInputWord = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
-    textControllerInputWord.addListener(_inputTextChangeListener);
-  }
-
-  void _incrementCounter() {
-    _counter++;
-    Fluttertoast.showToast(
-      msg: "Total Clicks: " + _counter.toString(),
-      toastLength: Toast.LENGTH_LONG,
-      //gravity: ToastGravity.CENTER,
-      //timeInSecForIos: 2,
-      //backgroundColor: Colors.red,
-      //textColor: Colors.white,
-      //fontSize: 16.0
-    );
   }
 
   @override
@@ -102,9 +84,9 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               _buildInputTextField(),
 
-              RaisedButton(
-                onPressed: (_canSpeak) ? _speechText : null,
-                child: Icon(Icons.volume_up),
+              CircularButton(
+                onPressed: _speechText,
+                icon: Icons.volume_up,
               ),
               IconButton(
                 icon: Icon(Icons.mic),
@@ -114,13 +96,12 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.forum),
                 onPressed: null,
               ),
-//            CircularButton(),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: () => {},
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ),
@@ -145,17 +126,15 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _inputTextChangeListener() {
-    bool isEmpty = textControllerInputWord.text.isEmpty;
-
-    // if you can speak, but the new text is invalid
-    // or if you can't speak but the text is valid, refresh the state
-    if ((_canSpeak && isEmpty) || (!_canSpeak && !isEmpty)) {
-      setState(() {
-        _canSpeak = !isEmpty;
-      });
+  void _speechText() {
+    if (textControllerInputWord.text.isEmpty) {
+      Fluttertoast.showToast(
+        msg: LocalizationController.of(context).invalidTextInput,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red[300],
+      );
+      return null;
     }
   }
 
-  void _speechText() {}
 }
