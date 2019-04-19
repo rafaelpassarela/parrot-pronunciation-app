@@ -51,29 +51,22 @@ class LocalizationController {
   }
 
   // One function to each translated text
-  String get appTitle {
-    return _doGetLocalizedText('appTitle');
-  }
-
-  String get configTitle{
-    return _doGetLocalizedText('configTitle');
-  }
-
-  String get inputWord {
-    return _doGetLocalizedText('inputWord');
-  }
-
-  String get inputHint {
-    return _doGetLocalizedText('inputHint');
-  }
-
-  String get invalidTextInput {
-    return _doGetLocalizedText('invalidTextInput');
-  }
-
+  String get appTitle => _doGetLocalizedText('appTitle');
+  String get configTitle => _doGetLocalizedText('configTitle');
+  String get inputWord => _doGetLocalizedText('inputWord');
+  String get inputHint => _doGetLocalizedText('inputHint');
+  String get invalidTextInput => _doGetLocalizedText('invalidTextInput');
+  // navbar Items
   String get navbarHome => _doGetLocalizedText('navbar.home');
   String get navbarConfig => _doGetLocalizedText('navbar.config');
   String get navbarFeedback => _doGetLocalizedText('navbar.feedback');
+  // feedback scrren
+  String get feedbackName => _doGetLocalizedText('feed.name');
+  String get feedbackEmail => _doGetLocalizedText('feed.mail');
+  String get feedbackMessage => _doGetLocalizedText('feed.message');
+  String get feedbackRequired => _doGetLocalizedText('feed.required');
+  String get feedbackSending => _doGetLocalizedText('feed.sending');
+  String get feedbackThanks => _doGetLocalizedText('feed.tks');
 }
 
 class MyLocalizationDelegate extends LocalizationsDelegate<LocalizationController> {

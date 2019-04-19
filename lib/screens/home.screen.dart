@@ -66,9 +66,10 @@ class _HomePageState extends State<HomePage> {
               _buildInputTextField(),
 
               CircularButton(
-                onPressed: (_isPlaying) ? null : _speechText,
-                btnColor: (_isPlaying) ? Colors.black38 : Colors.green,
+                onPressed: _speechText,
+                btnColor: Colors.green,
                 icon: Icons.volume_up,
+                enabled: !_isPlaying,
               ),
               IconButton(
                 icon: Icon(Icons.mic),
@@ -134,11 +135,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onItemTapped(int index) {
-    Fluttertoast.showToast(
-      msg: index.toString(),
-      toastLength: Toast.LENGTH_LONG
-    );
-
     switch (index) {
       case 0:
         Navigator.pushNamed(context, '/config');
