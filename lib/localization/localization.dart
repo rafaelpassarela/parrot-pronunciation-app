@@ -55,6 +55,10 @@ class LocalizationController {
     return _doGetLocalizedText('appTitle');
   }
 
+  String get configTitle{
+    return _doGetLocalizedText('configTitle');
+  }
+
   String get inputWord {
     return _doGetLocalizedText('inputWord');
   }
@@ -66,6 +70,10 @@ class LocalizationController {
   String get invalidTextInput {
     return _doGetLocalizedText('invalidTextInput');
   }
+
+  String get navbarHome => _doGetLocalizedText('navbar.home');
+  String get navbarConfig => _doGetLocalizedText('navbar.config');
+  String get navbarFeedback => _doGetLocalizedText('navbar.feedback');
 }
 
 class MyLocalizationDelegate extends LocalizationsDelegate<LocalizationController> {

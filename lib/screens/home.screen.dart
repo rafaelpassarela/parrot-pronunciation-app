@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:parrot_pronunciation_app/widgets/tts.controller.dart';
 import 'package:parrot_pronunciation_app/widgets/circular.button.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
 
 class HomePage extends StatefulWidget {
 
   HomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -52,7 +43,7 @@ class _HomePageState extends State<HomePage> {
               child: Text(LocalizationController.of(context).appTitle),
             )
           ],
-        )
+        ),
       ),
 
       body: Container(
@@ -70,7 +61,7 @@ class _HomePageState extends State<HomePage> {
           // Center is a layout widget. It takes a single child and positions it
           // in the middle of the parent.
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               _buildInputTextField(),
 
@@ -87,9 +78,39 @@ class _HomePageState extends State<HomePage> {
                 icon: Icon(Icons.forum),
                 onPressed: null,
               ),
+              RaisedButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/config');
+                },
+                child: Text('Config'),
+              )
             ],
           ),
         ),
+      ),
+      /*floatingActionButton: FloatingActionButton(
+        onPressed: () => {},
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
+      ),*/
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text( LocalizationController.of(context).navbarConfig )
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text( LocalizationController.of(context).navbarHome )
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.feedback),
+              title: Text( LocalizationController.of(context).navbarFeedback )
+          ),
+        ],
+        currentIndex: 1,
+        fixedColor: Colors.green,
+        onTap: _onItemTapped,
       ),
     );
   }
@@ -112,6 +133,24 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _onItemTapped(int index) {
+    Fluttertoast.showToast(
+      msg: index.toString(),
+      toastLength: Toast.LENGTH_LONG
+    );
+
+    switch (index) {
+      case 0:
+        Navigator.pushNamed(context, '/config');
+        break;
+      case 1:
+        break;
+      case 2:
+        Navigator.pushNamed(context, '/feedback');
+        break;
+    }
+  }
+
   void _speechText() {
     if (_textControllerInputWord.text.isEmpty) {
       Fluttertoast.showToast(
@@ -126,7 +165,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _statusCallback(TtsCallbackStatus status) {
-
     print(status.toString());
 
     if (status == TtsCallbackStatus.error) {
