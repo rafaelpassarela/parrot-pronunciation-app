@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 enum TtsState { playing, stopped }
-enum TtsCallbackStatus {start, completion, error}
+enum TtsCallbackStatus { start, completion, error }
 
-class TtsController { //extends State<MyApp> {
+class TtsController {
   TtsController({this.statusCallback});
 
   final void Function(TtsCallbackStatus) statusCallback;
@@ -36,27 +36,27 @@ class TtsController { //extends State<MyApp> {
     }
 
     flutterTts.setStartHandler(() {
-    //  setState(() {
-        lastError = '';
-        ttsState = TtsState.playing;
-        statusCallback(TtsCallbackStatus.start);
-    //  });
+      //  setState(() {
+      lastError = '';
+      ttsState = TtsState.playing;
+      statusCallback(TtsCallbackStatus.start);
+      //  });
     });
 
     flutterTts.setCompletionHandler(() {
-    //  setState(() {
-        lastError = '';
-        ttsState = TtsState.stopped;
-        statusCallback(TtsCallbackStatus.completion);
-    //  });
+      //  setState(() {
+      lastError = '';
+      ttsState = TtsState.stopped;
+      statusCallback(TtsCallbackStatus.completion);
+      //  });
     });
 
     flutterTts.setErrorHandler((msg) {
-    //  setState(() {
-        ttsState = TtsState.stopped;
-        lastError = msg;
-        statusCallback(TtsCallbackStatus.error);
-    //  });
+      //  setState(() {
+      ttsState = TtsState.stopped;
+      lastError = msg;
+      statusCallback(TtsCallbackStatus.error);
+      //  });
     });
   }
 
@@ -120,23 +120,23 @@ void dispose() {
   }
 
   void changedLanguageDropDownItem(String selectedType) {
-  //  setState(() {
-      language = selectedType;
-      flutterTts.setLanguage(language);
-  //  });
+    //  setState(() {
+    language = selectedType;
+    flutterTts.setLanguage(language);
+    //  });
   }
 
   void changedVoiceDropDownItem(String selectedType) {
-  //  setState(() {
-      voice = selectedType;
-      flutterTts.setVoice(voice);
-  //  });
+    //  setState(() {
+    voice = selectedType;
+    flutterTts.setVoice(voice);
+    //  });
   }
 
   void _onChange(String text) {
-  //  setState(() {
-      _newVoiceText = text;
-  //  });
+    //  setState(() {
+    _newVoiceText = text;
+    //  });
   }
 
 /*
@@ -227,4 +227,3 @@ void dispose() {
   }
   */
 }
-

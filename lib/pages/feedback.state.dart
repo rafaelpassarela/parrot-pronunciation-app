@@ -1,25 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:parrot_pronunciation_app/http/http.controller.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
 import 'package:parrot_pronunciation_app/widgets/circular.button.dart';
 
-class ContactData {
-  String name = "";
-  String email = "";
-  String subject = "Feedback from Parrot App";
-  String message = "";
-  bool sendCopy = false;
-  int locale =  1;
-}
-
-class FeedBackScreen extends StatefulWidget {
+class FeedBackPage extends StatefulWidget {
   @override
-  _FeedBackScreenState createState() => _FeedBackScreenState();
+  _FeedBackPageState createState() => _FeedBackPageState();
 }
 
-class _FeedBackScreenState extends State<FeedBackScreen>{
+class _FeedBackPageState extends State<FeedBackPage>{
   TextEditingController _nameTextEditingController = new TextEditingController();
   TextEditingController _emailTextEditingController = new TextEditingController();
   TextEditingController _messageTextEditingController = new TextEditingController();
@@ -96,7 +87,6 @@ class _FeedBackScreenState extends State<FeedBackScreen>{
               FocusScope.of(context).requestFocus(_emailFocus);
             }
           }
-
         }
       ),
     );
@@ -138,9 +128,6 @@ class _FeedBackScreenState extends State<FeedBackScreen>{
       thenCallback: _sendResponse,
       errorCallback: _errorCallback
     );
-
-    // retorno
-    // {"result":true,"mailSent":true}
   }
 
   void _sendResponse(http.Response value) {

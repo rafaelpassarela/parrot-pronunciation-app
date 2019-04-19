@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:parrot_pronunciation_app/screens/feedback.screen.dart';
+import 'package:parrot_pronunciation_app/pages/feedback.state.dart';
 
-import 'package:parrot_pronunciation_app/screens/home.screen.dart';
-import 'package:parrot_pronunciation_app/screens/config.screen.dart';
+import 'package:parrot_pronunciation_app/pages/home.state.dart';
+import 'package:parrot_pronunciation_app/pages/config.state.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
 
 class MyApp extends StatelessWidget {
@@ -37,8 +37,8 @@ class MyApp extends StatelessWidget {
         // when navigate to '/' route, build the homeScreen
         '/': (context) => HomePage(),
         // when navigate to '/config' route, build the configScreen
-        '/config': (context) => ConfigScreen(),
-        '/feedback': (context) => FeedBackScreen(),
+        '/config': (context) => ConfigPage(),
+        '/feedback': (context) => FeedBackPage(),
       },
 
     );

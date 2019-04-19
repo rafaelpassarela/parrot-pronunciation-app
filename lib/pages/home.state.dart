@@ -5,7 +5,6 @@ import 'package:parrot_pronunciation_app/widgets/circular.button.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
 
 class HomePage extends StatefulWidget {
-
   HomePage({Key key, this.title}) : super(key: key);
 
   final String title;
@@ -15,7 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   TextEditingController _textControllerInputWord = TextEditingController();
   TtsController _ttsController;
   bool _isPlaying = false;
@@ -45,69 +43,50 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            // add additional colors to define a multi-point gradient
-            colors: [
-              Colors.white,
-              Color(0x4089ED91)],
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              // add additional colors to define a multi-point gradient
+              colors: [Colors.white, Color(0x4089ED91)],
+            ),
           ),
-        ),
-        child: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              _buildInputTextField(),
-
-              CircularButton(
-                onPressed: _speechText,
-                btnColor: Colors.green,
-                icon: Icons.volume_up,
-                enabled: !_isPlaying,
-              ),
-              IconButton(
-                icon: Icon(Icons.mic),
-                onPressed: null,
-              ),
-              IconButton(
-                icon: Icon(Icons.forum),
-                onPressed: null,
-              ),
-              RaisedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/config');
-                },
-                child: Text('Config'),
-              )
-            ],
-          ),
-        ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                _buildInputTextField(),
+                CircularButton(
+                  onPressed: _speechText,
+                  btnColor: Colors.green,
+                  icon: Icons.volume_up,
+                  enabled: !_isPlaying,
+                ),
+                IconButton(
+                  icon: Icon(Icons.mic),
+                  onPressed: null,
+                ),
+                IconButton(
+                  icon: Icon(Icons.forum),
+                  onPressed: null,
+                ),
+              ],
+            ),
+          )
       ),
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: () => {},
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),*/
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(Icons.settings),
-              title: Text( LocalizationController.of(context).navbarConfig )
-          ),
+              title: Text(LocalizationController.of(context).navbarConfig)),
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Text( LocalizationController.of(context).navbarHome )
-          ),
+              title: Text(LocalizationController.of(context).navbarHome)),
           BottomNavigationBarItem(
               icon: Icon(Icons.feedback),
-              title: Text( LocalizationController.of(context).navbarFeedback )
-          ),
+              title: Text(LocalizationController.of(context).navbarFeedback)),
         ],
         currentIndex: 1,
         fixedColor: Colors.green,
@@ -123,6 +102,7 @@ class _HomePageState extends State<HomePage> {
         autofocus: true,
         // maxLines = NULL: adds new lines when the current line reaches the line character limit
         maxLines: null,
+        maxLength: 500,
         cursorColor: Colors.green,
         controller: _textControllerInputWord,
         decoration: InputDecoration(
@@ -161,8 +141,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _statusCallback(TtsCallbackStatus status) {
-    print(status.toString());
-
     if (status == TtsCallbackStatus.error) {
       Fluttertoast.showToast(
         msg: _ttsController.lastError,
@@ -175,5 +153,4 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-
 }
