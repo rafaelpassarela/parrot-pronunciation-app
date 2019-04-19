@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
+// https://github.com/dlutton/flutter_tts/blob/master/example/lib/main.dart
+
 enum TtsState { playing, stopped }
 enum TtsCallbackStatus { start, completion, error }
 
