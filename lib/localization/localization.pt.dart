@@ -15,4 +15,7 @@ const Map<String, String> ptLocalization = const {
   'feed.required': 'Desculpe, mas todos os campos são obrigatórios.',
   'feed.sending': 'Aguarde... Enviando Feedback...',
   'feed.tks': 'Obrigado pelo seu feedback!',
+  // config
+  'config.speak': 'Idioma da Fala',
+  'config.yourlang': 'Seu Idioma',
 };

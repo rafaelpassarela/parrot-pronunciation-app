@@ -103,7 +103,7 @@ class _FeedBackPageState extends State<FeedBackPage>{
       return;
     }
 
-    String url = "http://mrrafael.ca/api/v1/sendcontact.php?id=05372adefd0093adf1fbcab0c2c6597de09f1376be";
+    String url = _getUrl();
     String json = '{'
         + '"name":"' + _nameTextEditingController.text + '",'
         + '"email":"' + _emailTextEditingController.text + '",'
@@ -157,6 +157,11 @@ class _FeedBackPageState extends State<FeedBackPage>{
     return _nameTextEditingController.text.isNotEmpty
         && _emailTextEditingController.text.isNotEmpty
         && _messageTextEditingController.text.isNotEmpty;
+  }
+
+  String _getUrl() {
+    return "http://mrrafael.ca/api/v1/sendcontact.php?'"
+         + "id=05372adefd0093adf1fbcab0c2c6597de09f1376be";
   }
 }
 

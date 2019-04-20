@@ -8,6 +8,11 @@ import 'package:flutter_tts/flutter_tts.dart';
 enum TtsState { playing, stopped }
 enum TtsCallbackStatus { start, completion, error }
 
+//class TtsContext {
+//  static TtsController ttsController;
+//
+//}
+
 class TtsController {
   TtsController({this.statusCallback});
 
@@ -21,62 +26,60 @@ class TtsController {
   String lastError;
   String _newVoiceText;
   TtsState ttsState = TtsState.stopped;
+  bool isInitialized = false;
 
   get isPlaying => ttsState == TtsState.playing;
   get isStopped => ttsState == TtsState.stopped;
 
   initTts() {
-    flutterTts = FlutterTts();
+    if (!isInitialized) {
+      flutterTts = FlutterTts();
 
-    if (Platform.isAndroid) {
-      flutterTts.ttsInitHandler(() {
-        _getLanguages();
-        _getVoices();
+      if (Platform.isAndroid) {
+        flutterTts.ttsInitHandler(() {
+          getLanguages();
+          _getVoices();
+        });
+      } else if (Platform.isIOS) {
+        getLanguages();
+      }
+
+      flutterTts.setStartHandler(() {
+        lastError = '';
+        ttsState = TtsState.playing;
+        statusCallback(TtsCallbackStatus.start);
       });
-    } else if (Platform.isIOS) {
-      _getLanguages();
+
+      flutterTts.setCompletionHandler(() {
+        lastError = '';
+        ttsState = TtsState.stopped;
+        statusCallback(TtsCallbackStatus.completion);
+      });
+
+      flutterTts.setErrorHandler((msg) {
+        ttsState = TtsState.stopped;
+        lastError = msg;
+        statusCallback(TtsCallbackStatus.error);
+      });
+
+      isInitialized = true;
     }
-
-    flutterTts.setStartHandler(() {
-      //  setState(() {
-      lastError = '';
-      ttsState = TtsState.playing;
-      statusCallback(TtsCallbackStatus.start);
-      //  });
-    });
-
-    flutterTts.setCompletionHandler(() {
-      //  setState(() {
-      lastError = '';
-      ttsState = TtsState.stopped;
-      statusCallback(TtsCallbackStatus.completion);
-      //  });
-    });
-
-    flutterTts.setErrorHandler((msg) {
-      //  setState(() {
-      ttsState = TtsState.stopped;
-      lastError = msg;
-      statusCallback(TtsCallbackStatus.error);
-      //  });
-    });
   }
 
-  Future _getLanguages() async {
+  Future<dynamic> getLanguages() async {
     languages = await flutterTts.getLanguages;
-    //if (languages != null) setState(() => languages);
+    return languages;
   }
 
   Future _getVoices() async {
     voices = await flutterTts.getVoices;
-    //if (voices != null) setState(() => voices);
   }
 
   Future _speak() async {
     if (_newVoiceText != null) {
       if (_newVoiceText.isNotEmpty) {
         var result = await flutterTts.speak(_newVoiceText);
-        if (result == 1) //setState(() => ttsState = TtsState.playing);
+        if (result == 1)
           ttsState = TtsState.playing;
       }
     }
@@ -97,22 +100,6 @@ class TtsController {
     _stop();
   }
 
-/*
-@override
-void dispose() {
-    super.dispose();
-    flutterTts.stop();
-  }
-*/
-
-  List<DropdownMenuItem<String>> getLanguageDropDownMenuItems() {
-    var items = List<DropdownMenuItem<String>>();
-    for (String type in languages) {
-      items.add(DropdownMenuItem(value: type, child: Text(type)));
-    }
-    return items;
-  }
-
   List<DropdownMenuItem<String>> getVoiceDropDownMenuItems() {
     var items = List<DropdownMenuItem<String>>();
     for (String type in voices) {
@@ -121,23 +108,10 @@ void dispose() {
     return items;
   }
 
-  void changedLanguageDropDownItem(String selectedType) {
-    //  setState(() {
-    language = selectedType;
-    flutterTts.setLanguage(language);
-    //  });
-  }
-
   void changedVoiceDropDownItem(String selectedType) {
     //  setState(() {
     voice = selectedType;
     flutterTts.setVoice(voice);
-    //  });
-  }
-
-  void _onChange(String text) {
-    //  setState(() {
-    _newVoiceText = text;
     //  });
   }
 
@@ -158,17 +132,6 @@ void dispose() {
                   voices != null ? voiceDropDownSection() : Text("")
                 ]))));
   }
-*/
-
-/*
-  Widget inputSection() => Container(
-      alignment: Alignment.topCenter,
-      padding: EdgeInsets.only(top: 25.0, left: 25.0, right: 25.0),
-      child: TextField(
-        onChanged: (String value) {
-          _onChange(value);
-        },
-  ));
 */
 
 /*

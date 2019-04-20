@@ -67,6 +67,9 @@ class LocalizationController {
   String get feedbackRequired => _doGetLocalizedText('feed.required');
   String get feedbackSending => _doGetLocalizedText('feed.sending');
   String get feedbackThanks => _doGetLocalizedText('feed.tks');
+  // config
+  String get configSpeak => _doGetLocalizedText('config.speak');
+  String get configYourLang => _doGetLocalizedText('config.yourlang');
 }
 
 class MyLocalizationDelegate extends LocalizationsDelegate<LocalizationController> {

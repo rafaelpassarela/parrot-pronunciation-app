@@ -15,4 +15,7 @@ const Map<String, String> enLocalization = const {
   'feed.required': 'Sorry, but all fields are required.',
   'feed.sending': 'Please wait... Sending Feedback...',
   'feed.tks': 'Thank you for your feedback!',
+  // config
+  'config.speak': 'Speaking Language',
+  'config.yourlang': 'Your Language',
 };
