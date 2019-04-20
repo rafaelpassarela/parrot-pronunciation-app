@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:parrot_pronunciation_app/database/config.controller.dart';
+import 'package:parrot_pronunciation_app/database/db.const.dart';
 import 'package:parrot_pronunciation_app/widgets/tts.controller.dart';
 import 'package:parrot_pronunciation_app/widgets/circular.button.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
@@ -16,13 +18,19 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   TextEditingController _textControllerInputWord = TextEditingController();
   TtsController _ttsController;
+  ConfigProvider _configProvider;
   bool _isPlaying = false;
+  String _speakLanguage;
+  String _voice;
+  String _myLanguage;
 
   @override
   void initState() {
     super.initState();
     _ttsController = new TtsController(statusCallback: _statusCallback);
     _ttsController.initTts();
+
+    _initConfigDataBase();
   }
 
   @override
@@ -74,7 +82,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-          )
+          ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
@@ -132,8 +140,39 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openConfigAndWait() async {
-    final result = await Navigator.pushNamed(context, '/config');
-    print('I\'M BACK');
+    // close the db connection
+    if (_configProvider != null) {
+      _configProvider.close();
+    }
+
+    await Navigator.pushNamed(context, '/config');
+
+    // if no configurations has found, open it again
+    _initConfigDataBase();
+  }
+
+  void _loadConfig() {
+    _configProvider.getAllConfig().then((List<Config> configList) {
+      if (configList != null) {
+        for (Config item in configList) {
+          switch (item.code) {
+            case CONFIG_VOICE:
+              _voice = item.value;
+              _ttsController.setVoice(_voice);
+              break;
+            case CONFIG_MY_LANG:
+              _myLanguage = item.value;
+              break;
+            case CONFIG_SPK_LANG:
+              _speakLanguage = item.value;
+              _ttsController.setLanguage(_speakLanguage);
+              break;
+          }
+        }
+      } else {
+        _openConfigAndWait();
+      }
+    });
   }
 
   void _speechText() {
@@ -147,6 +186,13 @@ class _HomePageState extends State<HomePage> {
     }
 
     _ttsController.speak(_textControllerInputWord.text);
+  }
+
+  void _initConfigDataBase() {
+    _configProvider = new ConfigProvider();
+    _configProvider.open().then((dynamic) {
+      _loadConfig();
+    });
   }
 
   void _statusCallback(TtsCallbackStatus status) {

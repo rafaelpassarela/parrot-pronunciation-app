@@ -100,80 +100,14 @@ class TtsController {
     _stop();
   }
 
-/*
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        home: Scaffold(
-            appBar: AppBar(
-              title: Text('Flutter TTS'),
-            ),
-            body: SingleChildScrollView(
-                scrollDirection: Axis.vertical,
-                child: Column(children: [
-                  inputSection(),
-                  btnSection(),
-                  languages != null ? languageDropDownSection() : Text(""),
-                  voices != null ? voiceDropDownSection() : Text("")
-                ]))));
+  void setVoice(String newVoice) {
+    voice = newVoice;
+    flutterTts.setVoice(voice);
   }
-*/
 
-/*
-  Widget btnSection() => Container(
-      padding: EdgeInsets.only(top: 50.0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-        _buildButtonColumn(
-            Colors.green, Colors.greenAccent, Icons.play_arrow, 'PLAY', _speak),
-        _buildButtonColumn(
-            Colors.red, Colors.redAccent, Icons.stop, 'STOP', _stop)
-      ]));
-*/
-
-/*
-  Widget languageDropDownSection() => Container(
-      padding: EdgeInsets.only(top: 50.0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        DropdownButton(
-          value: language,
-          items: getLanguageDropDownMenuItems(),
-          onChanged: changedLanguageDropDownItem,
-        )
-      ]));
-*/
-
-/*
-  Widget voiceDropDownSection() => Container(
-      padding: EdgeInsets.only(top: 50.0),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-        DropdownButton(
-          value: voice,
-          items: getVoiceDropDownMenuItems(),
-          onChanged: changedVoiceDropDownItem,
-        )
-      ]));
-*/
-
-/*
-  Column _buildButtonColumn(Color color, Color splashColor, IconData icon,
-      String label, Function func) {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          IconButton(
-              icon: Icon(icon),
-              color: color,
-              splashColor: splashColor,
-              onPressed: () => func()),
-          Container(
-              margin: const EdgeInsets.only(top: 8.0),
-              child: Text(label,
-                  style: TextStyle(
-                      fontSize: 12.0,
-                      fontWeight: FontWeight.w400,
-                      color: color)))
-        ]);
+  void setLanguage(String newLanguage) {
+    language = newLanguage;
+    flutterTts.setLanguage(language);
   }
-  */
+
 }
