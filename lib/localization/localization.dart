@@ -53,9 +53,11 @@ class LocalizationController {
   // One function to each translated text
   String get appTitle => _doGetLocalizedText('appTitle');
   String get configTitle => _doGetLocalizedText('configTitle');
+  String get invalidTextInput => _doGetLocalizedText('invalidTextInput');
+  // home
   String get inputWord => _doGetLocalizedText('inputWord');
   String get inputHint => _doGetLocalizedText('inputHint');
-  String get invalidTextInput => _doGetLocalizedText('invalidTextInput');
+  String get recordAudio => _doGetLocalizedText('record.audio');
   // navbar Items
   String get navbarHome => _doGetLocalizedText('navbar.home');
   String get navbarConfig => _doGetLocalizedText('navbar.config');

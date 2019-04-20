@@ -1,9 +1,11 @@
 const Map<String, String> enLocalization = const {
   'appTitle': 'Parrot - Practice the Pronunciation',
   'configTitle': 'Configurations',
+  'invalidTextInput': 'Oops! I don\'t know what to say... Literally',
+  // home
   'inputWord': 'Enter the Word or Phrase',
   'inputHint': 'Click the button below and listen carefully',
-  'invalidTextInput': 'Oops! I don\'t know what to say... Literally',
+  'record.audio': 'Record Your Audio',
   // navbar Items
   'navbar.home': 'Home',
   'navbar.config': 'Config.',

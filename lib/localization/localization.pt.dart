@@ -1,9 +1,11 @@
 const Map<String, String> ptLocalization = const {
   'appTitle': 'Papagaio - Pratique a Pronúncia',
   'configTitle': 'Configurações',
+  'invalidTextInput': 'Opa! Eu não sei o que dizer... Literalmente',
+  // home
   'inputWord': 'Informe a Palavra ou Frase',
   'inputHint': 'Aperte o botão abaixo e escute atentamente',
-  'invalidTextInput': 'Opa! Eu não sei o que dizer... Literalmente',
+  'record.audio': 'Grave Seu Áudio',
   // navbar Items
   'navbar.home': 'Inicial',
   'navbar.config': 'Configurações',

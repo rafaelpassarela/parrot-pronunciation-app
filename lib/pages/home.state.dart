@@ -44,45 +44,44 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Image.asset('assets/icon.png', fit: BoxFit.cover, height: 32),
-            Container(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(LocalizationController.of(context).appTitle),
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(LocalizationController.of(context).appTitle),
+              ),
             )
           ],
         ),
       ),
       body: Container(
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              // add additional colors to define a multi-point gradient
-              colors: [Colors.white, Color(0x4089ED91)],
-            ),
+        height: MediaQuery.of(context).size.height,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            // add additional colors to define a multi-point gradient
+            colors: [Colors.white, Color(0x4089ED91)],
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                _buildInputTextField(),
-                CircularButton(
-                  onPressed: _speechText,
-                  btnColor: Colors.green,
-                  icon: Icons.volume_up,
-                  enabled: !_isPlaying,
-                ),
-                IconButton(
-                  icon: Icon(Icons.mic),
-                  onPressed: null,
-                ),
-                IconButton(
-                  icon: Icon(Icons.forum),
-                  onPressed: null,
-                ),
-              ],
-            ),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              _buildInputTextField(),
+              CircularButton(
+                onPressed: _speechText,
+                btnColor: Colors.green,
+                icon: Icons.volume_up,
+                enabled: !_isPlaying,
+              ),
+              _buildRecordingField(),
+              IconButton(
+                icon: Icon(Icons.forum),
+                onPressed: null,
+              ),
+            ],
           ),
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
@@ -91,17 +90,44 @@ class _HomePageState extends State<HomePage> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
               icon: Icon(Icons.settings),
-              title: Text(LocalizationController.of(context).navbarConfig)
-          ),
+              title: Text(LocalizationController.of(context).navbarConfig)),
           BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Text(LocalizationController.of(context).navbarHome)
-          ),
+              title: Text(LocalizationController.of(context).navbarHome)),
           BottomNavigationBarItem(
               icon: Icon(Icons.feedback),
-              title: Text(LocalizationController.of(context).navbarFeedback)
-          ),
+              title: Text(LocalizationController.of(context).navbarFeedback)),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRecordingField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5, left: 20, right: 20, top: 20),
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20, top: 20),
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          border: Border.all(
+            color: Colors.green,
+            width: 2,
+          ),
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(LocalizationController.of(context).recordAudio,
+                style: TextStyle(color: Colors.green, fontSize: 12)
+            ),
+            Text(''),
+            CircularButton(
+              onPressed: () => {},
+              icon: Icons.mic,
+              btnColor: Colors.green,
+            ),
+          ],
+        ),
       ),
     );
   }
