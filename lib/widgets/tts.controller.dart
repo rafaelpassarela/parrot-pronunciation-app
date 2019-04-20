@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:flutter/material.dart';
 import 'package:flutter_tts/flutter_tts.dart';
 
 // https://github.com/dlutton/flutter_tts/blob/master/example/lib/main.dart
@@ -38,7 +37,7 @@ class TtsController {
       if (Platform.isAndroid) {
         flutterTts.ttsInitHandler(() {
           getLanguages();
-          _getVoices();
+          getVoices();
         });
       } else if (Platform.isIOS) {
         getLanguages();
@@ -71,8 +70,9 @@ class TtsController {
     return languages;
   }
 
-  Future _getVoices() async {
+  Future<dynamic> getVoices() async {
     voices = await flutterTts.getVoices;
+    return voices;
   }
 
   Future _speak() async {
@@ -98,21 +98,6 @@ class TtsController {
 
   void stop() {
     _stop();
-  }
-
-  List<DropdownMenuItem<String>> getVoiceDropDownMenuItems() {
-    var items = List<DropdownMenuItem<String>>();
-    for (String type in voices) {
-      items.add(DropdownMenuItem(value: type, child: Text(type)));
-    }
-    return items;
-  }
-
-  void changedVoiceDropDownItem(String selectedType) {
-    //  setState(() {
-    voice = selectedType;
-    flutterTts.setVoice(voice);
-    //  });
   }
 
 /*

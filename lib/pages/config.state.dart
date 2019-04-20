@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:parrot_pronunciation_app/database/config.controller.dart';
 import 'package:parrot_pronunciation_app/database/db.const.dart';
@@ -14,9 +16,8 @@ class _ConfigPageState extends State<ConfigPage> {
       new TtsController(statusCallback: (TtsCallbackStatus status) => {});
 
   List<String> _availableLanguages;
+  List<String> _availableVoices;
   ConfigProvider _configProvider;
-  //String _selectedLanguage;
-  //String _mySelectedLanguage;
   Config _selectedLanguage = new Config(
     id: null,
     code: CONFIG_SPK_LANG,
@@ -29,17 +30,21 @@ class _ConfigPageState extends State<ConfigPage> {
     description: 'My Native Localization',
     value: null,
   );
+  Config _selectedVoice = new Config(
+    id: null,
+    code: CONFIG_VOICE,
+    description: 'Selected Voice',
+    value: null,
+  );
 
   @override
   void initState() {
     super.initState();
 
     _configProvider = new ConfigProvider();
-    _configProvider.open().then(
-        (dynamic) {
-          _loadValues();
-        }
-    );
+    _configProvider.open().then((dynamic) {
+      _loadValues();
+    });
 
     _ttsController.initTts();
     _ttsController.getLanguages().then((dynamic value) {
@@ -52,6 +57,19 @@ class _ConfigPageState extends State<ConfigPage> {
         _availableLanguages.sort();
       });
     });
+
+    if (Platform.isAndroid) {
+      _ttsController.getVoices().then((dynamic value) {
+        _availableVoices = new List<String>();
+
+        for (String item in value) {
+          _availableVoices.add(item);
+        }
+        setState(() {
+          _availableVoices.sort();
+        });
+      });
+    }
   }
 
   @override
@@ -64,38 +82,49 @@ class _ConfigPageState extends State<ConfigPage> {
 
   void _loadValues() {
     // load speak language
-    _configProvider.getConfig(CONFIG_SPK_LANG).then(
-        (Config config) {
-          String value;
-          if (config != null) {
-            value = config.value;
-            _selectedLanguage.id = config.id;
-          }
+    _configProvider.getConfig(CONFIG_SPK_LANG).then((Config config) {
+      String value;
+      if (config != null) {
+        value = config.value;
+        _selectedLanguage.id = config.id;
+      }
 
-          if (_selectedLanguage.value != value) {
-            setState(() {
-              _selectedLanguage.value = value;
-            });
-          }
-        }
-    );
+      if (_selectedLanguage.value != value) {
+        setState(() {
+          _selectedLanguage.value = value;
+        });
+      }
+    });
 
     // load my language
-    _configProvider.getConfig(CONFIG_MY_LANG).then(
-        (Config config) {
-          String value;
-          if (config != null) {
-            value = config.value;
-            _mySelectedLanguage.id = config.id;
-          }
+    _configProvider.getConfig(CONFIG_MY_LANG).then((Config config) {
+      String value;
+      if (config != null) {
+        value = config.value;
+        _mySelectedLanguage.id = config.id;
+      }
 
-          if (_mySelectedLanguage.value != value) {
-            setState(() {
-              _mySelectedLanguage.value = value;
-            });
-          }
-        }
-    );
+      if (_mySelectedLanguage.value != value) {
+        setState(() {
+          _mySelectedLanguage.value = value;
+        });
+      }
+    });
+
+    // load voice
+    _configProvider.getConfig(CONFIG_VOICE).then((Config config) {
+      String value;
+      if (config != null) {
+        value = config.value;
+        _selectedVoice.id = config.id;
+      }
+
+      if (_selectedVoice.value != value) {
+        setState(() {
+          _selectedVoice.value = value;
+        });
+      }
+    });
   }
 
   @override
@@ -108,8 +137,12 @@ class _ConfigPageState extends State<ConfigPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            getRow(LocalizationController.of(context).configSpeak, _languageDropDownSection() ),
-            getRow(LocalizationController.of(context).configYourLang, _myLanguageDropDownSection() ),
+            getRow(LocalizationController.of(context).configSpeak,
+                _languageDropDownSection()),
+            getRow(LocalizationController.of(context).configYourLang,
+                _myLanguageDropDownSection()),
+            getRow(LocalizationController.of(context).configVoice,
+                _voiceDropDownSection()),
           ],
         ),
       ),
@@ -120,8 +153,9 @@ class _ConfigPageState extends State<ConfigPage> {
     return DropdownButton(
       isExpanded: true,
       value: _selectedLanguage.value,
-      items:
-          (_availableLanguages != null) ? getLanguageDropDownMenuItems() : null,
+      items: (_availableLanguages != null)
+          ? _getLanguageDropDownMenuItems()
+          : null,
       onChanged: changedLanguageDropDownItem,
     );
   }
@@ -130,10 +164,37 @@ class _ConfigPageState extends State<ConfigPage> {
     return DropdownButton(
       isExpanded: true,
       value: _mySelectedLanguage.value,
-      items:
-      (_availableLanguages != null) ? getLanguageDropDownMenuItems() : null,
+      items: (_availableLanguages != null)
+          ? _getLanguageDropDownMenuItems()
+          : null,
       onChanged: changedMyLanguageDropDownItem,
     );
+  }
+
+  Widget _voiceDropDownSection() {
+    return DropdownButton(
+      isExpanded: true,
+      value: _selectedVoice.value,
+      items:
+          (_availableVoices != null) ? _getVoiceDropDownMenuItems() : null,
+      onChanged: changedVoiceDropDownItem,
+    );
+  }
+
+  List<DropdownMenuItem<String>> _getLanguageDropDownMenuItems() {
+    var items = List<DropdownMenuItem<String>>();
+    for (String type in _availableLanguages) {
+      items.add(DropdownMenuItem(value: type, child: Text(type)));
+    }
+    return items;
+  }
+
+  List<DropdownMenuItem<String>> _getVoiceDropDownMenuItems() {
+    var items = List<DropdownMenuItem<String>>();
+    for (String type in _availableVoices) {
+      items.add(DropdownMenuItem(value: type, child: Text(type)));
+    }
+    return items;
   }
 
   void changedLanguageDropDownItem(String selectedType) {
@@ -147,6 +208,13 @@ class _ConfigPageState extends State<ConfigPage> {
     setState(() {
       _mySelectedLanguage.value = selectedType;
       _configProvider.insertOrUpdate(_mySelectedLanguage);
+    });
+  }
+
+  void changedVoiceDropDownItem(String selectedType) {
+    setState(() {
+      _selectedVoice.value = selectedType;
+      _configProvider.insertOrUpdate(_selectedVoice);
     });
   }
 
@@ -170,14 +238,4 @@ class _ConfigPageState extends State<ConfigPage> {
       ),
     );
   }
-
-  List<DropdownMenuItem<String>> getLanguageDropDownMenuItems() {
-    var items = List<DropdownMenuItem<String>>();
-    for (String type in _availableLanguages) {
-      items.add(DropdownMenuItem(value: type, child: Text(type)));
-    }
-    return items;
-  }
-
-
 }

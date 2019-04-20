@@ -70,6 +70,7 @@ class LocalizationController {
   // config
   String get configSpeak => _doGetLocalizedText('config.speak');
   String get configYourLang => _doGetLocalizedText('config.yourlang');
+  String get configVoice => _doGetLocalizedText('config.voice');
 }
 
 class MyLocalizationDelegate extends LocalizationsDelegate<LocalizationController> {

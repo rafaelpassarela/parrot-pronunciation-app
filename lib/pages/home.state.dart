@@ -77,20 +77,23 @@ class _HomePageState extends State<HomePage> {
           )
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              title: Text(LocalizationController.of(context).navbarConfig)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              title: Text(LocalizationController.of(context).navbarHome)),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.feedback),
-              title: Text(LocalizationController.of(context).navbarFeedback)),
-        ],
         currentIndex: 1,
         fixedColor: Colors.green,
         onTap: _onItemTapped,
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text(LocalizationController.of(context).navbarConfig)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              title: Text(LocalizationController.of(context).navbarHome)
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.feedback),
+              title: Text(LocalizationController.of(context).navbarFeedback)
+          ),
+        ],
       ),
     );
   }
@@ -117,7 +120,8 @@ class _HomePageState extends State<HomePage> {
   void _onItemTapped(int index) {
     switch (index) {
       case 0:
-        Navigator.pushNamed(context, '/config');
+        // navigate and wait to return back
+        _openConfigAndWait();
         break;
       case 1:
         break;
@@ -125,6 +129,11 @@ class _HomePageState extends State<HomePage> {
         Navigator.pushNamed(context, '/feedback');
         break;
     }
+  }
+
+  void _openConfigAndWait() async {
+    final result = await Navigator.pushNamed(context, '/config');
+    print('I\'M BACK');
   }
 
   void _speechText() {

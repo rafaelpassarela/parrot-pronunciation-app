@@ -18,4 +18,5 @@ const Map<String, String> ptLocalization = const {
   // config
   'config.speak': 'Idioma da Fala',
   'config.yourlang': 'Seu Idioma',
+  'config.voice': 'Voz',
 };

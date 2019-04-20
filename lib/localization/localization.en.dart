@@ -18,4 +18,5 @@ const Map<String, String> enLocalization = const {
   // config
   'config.speak': 'Speaking Language',
   'config.yourlang': 'Your Language',
+  'config.voice': 'Voice',
 };
