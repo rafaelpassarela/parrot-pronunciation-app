@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:parrot_pronunciation_app/database/config.controller.dart';
 import 'package:parrot_pronunciation_app/database/db.const.dart';
 import 'package:parrot_pronunciation_app/widgets/tts.controller.dart';
@@ -17,12 +20,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController _textControllerInputWord = TextEditingController();
+  FlutterSound _flutterSound;
   TtsController _ttsController;
   ConfigProvider _configProvider;
   bool _isPlaying = false;
   String _speakLanguage;
   String _voice;
   String _myLanguage;
+  // recording control
+  bool _isRecording = false;
+  String _lastRecording;
 
   @override
   void initState() {
@@ -72,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _speechText,
                 btnColor: Colors.green,
                 icon: Icons.volume_up,
-                enabled: !_isPlaying,
+                enabled: !_isPlaying && !_isRecording,
               ),
               _buildRecordingField(),
               IconButton(
@@ -121,15 +128,77 @@ class _HomePageState extends State<HomePage> {
                 style: TextStyle(color: Colors.green, fontSize: 12)
             ),
             Text(''),
-            CircularButton(
-              onPressed: () => {},
-              icon: Icons.mic,
-              btnColor: Colors.green,
+            Container(
+              width: (_isRecording) ? 80 : null,
+              height: (_isRecording) ? 80 : null,
+              child: Listener(
+                onPointerDown: (details) {
+                  setState(() {
+                    _recordWhilePressed();
+                  });
+                },
+                onPointerUp: (details) {
+                  setState(() {
+                    _isRecording = false;
+                  });
+                },
+                onPointerCancel: (details) {
+                  setState(() {
+                    _isRecording = false;
+                  });
+                },
+                child: CircularButton(
+                  onPressed: () => {},
+                  icon: Icons.mic,
+                  btnColor: (_isRecording) ? Colors.red : Colors.green,
+                  size: (_isRecording) ? 50 : null,
+                  enabled: !_isPlaying,
+                ),
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _recordWhilePressed() async {
+    // make sure that only one loop is active
+    if (_isRecording) return;
+
+    setState(() {
+      _isRecording = true;
+    });
+
+    _flutterSound = new FlutterSound();
+    _lastRecording = await _flutterSound.startRecorder(_getRecordFileName());
+
+//    _recorderSubscription = flutterSound.onRecorderStateChanged.listen((e) {
+//      DateTime date = new DateTime.fromMillisecondsSinceEpoch(e.currentPosition.toInt());
+//      String txt = DateFormat('mm:ss:SS', 'en_US').format(date);
+//    });
+
+    Fluttertoast.showToast(msg: _lastRecording);
+    while (_isRecording) {
+      // wait a bit
+      await Future.delayed(Duration(milliseconds: 200));
+    }
+
+    _lastRecording = await _flutterSound.stopRecorder();
+
+//    if (_recorderSubscription != null) {
+//      _recorderSubscription.cancel();
+//      _recorderSubscription = null;
+//    }
+
+    Fluttertoast.showToast(msg: _lastRecording);
+
+    _flutterSound = null;
+  }
+
+  String _getRecordFileName() {
+    return null;
+//    return 'Parrot_Recording' + ((Platform.isAndroid) ? '.mp4' : '.m4a');
   }
 
   Widget _buildInputTextField() {
