@@ -54,10 +54,14 @@ class LocalizationController {
   String get appTitle => _doGetLocalizedText('appTitle');
   String get configTitle => _doGetLocalizedText('configTitle');
   String get invalidTextInput => _doGetLocalizedText('invalidTextInput');
+  String get andSeparator => _doGetLocalizedText('and');
   // home
   String get inputWord => _doGetLocalizedText('inputWord');
   String get inputHint => _doGetLocalizedText('inputHint');
   String get recordAudio => _doGetLocalizedText('record.audio');
+  String get playAndCompare => _doGetLocalizedText('play.compare');
+  String get playInput => _doGetLocalizedText('play.input');
+  String get playYou => _doGetLocalizedText('play.you');
   // navbar Items
   String get navbarHome => _doGetLocalizedText('navbar.home');
   String get navbarConfig => _doGetLocalizedText('navbar.config');

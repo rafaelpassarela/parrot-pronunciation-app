@@ -21,18 +21,21 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   TextEditingController _textControllerInputWord = TextEditingController();
-  FlutterSound _flutterSound;
+  FlutterSound _flutterSound = new FlutterSound();
   TtsController _ttsController;
   ConfigProvider _configProvider;
+  bool _isSpeaking = false;
   bool _isPlaying = false;
+  bool _isRecording = false;
   String _speakLanguage;
   String _voice;
   String _myLanguage;
   // recording control
-  bool _isRecording = false;
   String _lastRecordFile;
-  String _recordingTime;
+  String _recordingTime = '';
   StreamSubscription<RecordStatus> _recorderSubscription;
+  StreamSubscription<PlayStatus> _playerSubscription;
+  String _currentStatus = '';
 
   @override
   void initState() {
@@ -83,13 +86,10 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _speechText,
                 btnColor: Colors.green,
                 icon: Icons.volume_up,
-                enabled: !_isPlaying && !_isRecording,
+                enabled: !_isSpeaking && !_isRecording && !_isPlaying,
               ),
               _buildRecordingField(),
-              IconButton(
-                icon: Icon(Icons.forum),
-                onPressed: null,
-              ),
+              _buildPlayField(),
             ],
           ),
         ),
@@ -128,10 +128,17 @@ class _HomePageState extends State<HomePage> {
         ),
         child: Column(
           children: <Widget>[
-            Text(LocalizationController.of(context).recordAudio,
+            Text(
+                LocalizationController.of(context).recordAudio,
                 style: TextStyle(color: Colors.green, fontSize: 12)
             ),
-            Text( (_isRecording) ? '$_recordingTime' : '' ),
+//            Text( (_isRecording) ? '$_recordingTime' : '' ),
+            Text(
+                '$_recordingTime',
+                style: TextStyle(
+                    color: (_isRecording) ? Colors.red : null
+                ),
+            ),
             Container(
               width: (_isRecording) ? 80 : null,
               height: (_isRecording) ? 80 : null,
@@ -157,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                   icon: Icons.mic,
                   btnColor: (_isRecording) ? Colors.red : Colors.green,
                   size: (_isRecording) ? 50 : null,
-                  enabled: !_isPlaying,
+                  enabled: !_isSpeaking,
                 ),
               ),
             ),
@@ -165,6 +172,54 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  Widget _buildPlayField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5, left: 20, right: 20, top: 20),
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 20, left: 20, right: 20, top: 20),
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(5)),
+          border: Border.all(
+            color: Colors.green,
+            width: 2,
+          ),
+        ),
+        child: Column(
+          children: <Widget>[
+            Text(
+                LocalizationController.of(context).playAndCompare,
+                style: TextStyle(color: Colors.green, fontSize: 12)
+            ),
+            Container(
+              child: CircularButton(
+                name: 'btnPlay',
+                onPressed: _playForCompare,
+                icon: Icons.forum,
+                btnColor: Colors.green,
+                enabled: !_isSpeaking && !_isRecording,
+              ),
+            ),
+            Text( '$_currentStatus'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _speechText() {
+    if (_textControllerInputWord.text.trim().isEmpty) {
+      Fluttertoast.showToast(
+        msg: LocalizationController.of(context).invalidTextInput,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red[300],
+      );
+      return null;
+    }
+
+    _ttsController.speak(_textControllerInputWord.text);
   }
 
   void _recordWhilePressed() async {
@@ -175,7 +230,7 @@ class _HomePageState extends State<HomePage> {
       _isRecording = true;
     });
 
-    _flutterSound = new FlutterSound();
+//    _flutterSound = new FlutterSound();
     _lastRecordFile = await _flutterSound.startRecorder(_getRecordFileName());
 
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {
@@ -197,9 +252,50 @@ class _HomePageState extends State<HomePage> {
       _recorderSubscription = null;
     }
 
-    _flutterSound = null;
+//    _flutterSound = null;
     // wait a bit to prevent a new file over the last one
     await Future.delayed(Duration(milliseconds: 1000));
+  }
+
+  void _playForCompare() async {
+
+    if (_textControllerInputWord.text.trim().isEmpty || _recordingTime == '') {
+      Fluttertoast.showToast(
+        msg: LocalizationController.of(context).inputWord
+            + ' ' + LocalizationController.of(context).andSeparator
+            + ' ' + LocalizationController.of(context).recordAudio,
+        toastLength: Toast.LENGTH_LONG,
+        backgroundColor: Colors.red[300],
+      );
+      return;
+    }
+
+    setState(() {
+      _isPlaying = true;
+      _currentStatus = LocalizationController.of(context).playInput;
+    });
+    // input text (by TTS)
+    _speechText();
+
+    setState(() {
+      _currentStatus = LocalizationController.of(context).playYou;
+    });
+
+    await _flutterSound.startPlayer( _lastRecordFile );
+
+    _playerSubscription = _flutterSound.onPlayerStateChanged.listen((e) {
+      if (e != null) {
+        DateTime date = new DateTime.fromMillisecondsSinceEpoch(e.currentPosition.toInt());
+        setState(() {
+//          _playingTime = DateFormat('mm:ss:SS', 'en_US').format(date);
+        });
+      }
+    });
+
+    setState(() {
+      _isPlaying =  false;
+      _currentStatus = '';
+    });
   }
 
   String _getRecordFileName() {
@@ -227,6 +323,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _onItemTapped(int index) {
+    if (_isSpeaking || _isRecording || _isPlaying)
+      return;
+
     switch (index) {
       case 0:
         // navigate and wait to return back
@@ -276,19 +375,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void _speechText() {
-    if (_textControllerInputWord.text.isEmpty) {
-      Fluttertoast.showToast(
-        msg: LocalizationController.of(context).invalidTextInput,
-        toastLength: Toast.LENGTH_LONG,
-        backgroundColor: Colors.red[300],
-      );
-      return null;
-    }
-
-    _ttsController.speak(_textControllerInputWord.text);
-  }
-
   void _initConfigDataBase() {
     _configProvider = new ConfigProvider();
     _configProvider.open().then((dynamic) {
@@ -305,7 +391,7 @@ class _HomePageState extends State<HomePage> {
       );
     } else {
       setState(() {
-        _isPlaying = _ttsController.isPlaying;
+        _isSpeaking = _ttsController.isPlaying;
       });
     }
   }
