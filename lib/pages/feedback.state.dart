@@ -51,6 +51,7 @@ class _FeedBackPageState extends State<FeedBackPage>{
       return CircularProgressIndicator();
     }
     return CircularButton(
+      name: 'btnFeedback',
       btnColor: Colors.green,
       icon: Icons.send,
       onPressed: _sendFeedback,
