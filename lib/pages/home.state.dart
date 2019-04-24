@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                   icon: Icons.mic,
                   btnColor: (_isRecording) ? Colors.red : Colors.green,
                   size: (_isRecording) ? 50 : null,
-                  enabled: !_isSpeaking,
+                  enabled: !_isSpeaking && !_isPlaying,
                 ),
               ),
             ),
@@ -199,7 +199,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: _playForCompare,
                 icon: Icons.forum,
                 btnColor: Colors.green,
-                enabled: !_isSpeaking && !_isRecording,
+                enabled: !_isSpeaking && !_isRecording && !_isPlaying,
               ),
             ),
             Text( '$_currentStatus'),
@@ -272,29 +272,26 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _isPlaying = true;
-      _currentStatus = LocalizationController.of(context).playInput;
+//      _currentStatus = LocalizationController.of(context).playInput;
     });
     // input text (by TTS)
-    _speechText();
+    _ttsController.speak(_textControllerInputWord.text);
 
-    setState(() {
-      _currentStatus = LocalizationController.of(context).playYou;
-    });
+//    setState(() {
+//      _currentStatus = LocalizationController.of(context).playYou;
+//    });
 
     await _flutterSound.startPlayer( _lastRecordFile );
 
     _playerSubscription = _flutterSound.onPlayerStateChanged.listen((e) {
       if (e != null) {
-        DateTime date = new DateTime.fromMillisecondsSinceEpoch(e.currentPosition.toInt());
-        setState(() {
-//          _playingTime = DateFormat('mm:ss:SS', 'en_US').format(date);
-        });
+        if (e.currentPosition >= e.duration) {
+          setState(() {
+            _isPlaying = false;
+            _currentStatus = '';
+          });
+        }
       }
-    });
-
-    setState(() {
-      _isPlaying =  false;
-      _currentStatus = '';
     });
   }
 
