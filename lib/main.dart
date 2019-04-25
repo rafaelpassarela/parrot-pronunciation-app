@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:parrot_pronunciation_app/pages/feedback.state.dart';
 
-import 'package:parrot_pronunciation_app/home/home.state.dart';
+import 'package:parrot_pronunciation_app/pages/home.state.dart';
+import 'package:parrot_pronunciation_app/pages/config.state.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
-
-void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
 
@@ -18,6 +18,7 @@ class MyApp extends StatelessWidget {
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
       ],
+      debugShowCheckedModeBanner: false,
       supportedLocales: [
         const Locale('en', ''),
         const Locale('pt', ''),
@@ -27,10 +28,24 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: HomePage(
+      title: 'App Title',
+      // Home property does not work with route
+      /* home: HomePage(
           title: 'Dummy Text'
-      )
+      ), */
+      initialRoute: '/',
+      routes: {
+        // when navigate to '/' route, build the homeScreen
+        '/': (context) => HomePage(),
+        // when navigate to '/config' route, build the configScreen
+        '/config': (context) => ConfigPage(),
+        '/feedback': (context) => FeedBackPage(),
+      },
 
     );
   }
+}
+
+void main() {
+  runApp(MyApp());
 }

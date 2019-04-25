@@ -14,3 +14,14 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter, view our 
 [online documentation](https://flutter.io/docs), which offers tutorials, 
 samples, guidance on mobile development, and a full API reference.
+
+Used PlugIns
+[Flutter Sound](https://pub.dartlang.org/packages/flutter_sound)
+
+[Flutter TTS](https://pub.dartlang.org/packages/flutter_tts)
+
+[FlutterToast](https://pub.dartlang.org/packages/fluttertoast)
+
+[sqflite](https://pub.dartlang.org/packages/sqflite)
+
+v1.01 - 2019.04.15
