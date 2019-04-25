@@ -234,8 +234,8 @@ class _HomePageState extends State<HomePage> {
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {
       DateTime date = new DateTime.fromMillisecondsSinceEpoch(e.currentPosition.toInt());
 
-      if (e.currentPosition.toInt() > 2500)
-        print('PAUSE para o PRINT');
+//      if (e.currentPosition.toInt() > 2500)
+//        print('PAUSE para o PRINT');
 
       setState(() {
         _recordingTime = DateFormat('mm:ss:SS', 'en_US').format(date);
