@@ -40,8 +40,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _ttsController = new TtsController(statusCallback: _statusCallback);
-    _ttsController.initTts();
 
     _initConfigDataBase();
   }
@@ -193,6 +191,7 @@ class _HomePageState extends State<HomePage> {
                 LocalizationController.of(context).playAndCompare,
                 style: TextStyle(color: Colors.green, fontSize: 12)
             ),
+            Text( '$_currentStatus'),
             Container(
               child: CircularButton(
                 name: 'btnPlay',
@@ -202,7 +201,6 @@ class _HomePageState extends State<HomePage> {
                 enabled: !_isSpeaking && !_isRecording && !_isPlaying,
               ),
             ),
-            Text( '$_currentStatus'),
           ],
         ),
       ),
@@ -235,6 +233,10 @@ class _HomePageState extends State<HomePage> {
 
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {
       DateTime date = new DateTime.fromMillisecondsSinceEpoch(e.currentPosition.toInt());
+
+      if (e.currentPosition.toInt() > 2500)
+        print('PAUSE para o PRINT');
+
       setState(() {
         _recordingTime = DateFormat('mm:ss:SS', 'en_US').format(date);
       });
@@ -272,14 +274,23 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       _isPlaying = true;
-//      _currentStatus = LocalizationController.of(context).playInput;
+      _currentStatus = LocalizationController.of(context).playInput;
     });
     // input text (by TTS)
-    _ttsController.speak(_textControllerInputWord.text);
+    try {
+      _isSpeaking = true;
+      _ttsController.speak(_textControllerInputWord.text);
 
-//    setState(() {
-//      _currentStatus = LocalizationController.of(context).playYou;
-//    });
+      while (_isSpeaking) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+    } catch (e) {
+      _isSpeaking = false;
+    }
+
+    setState(() {
+      _currentStatus = LocalizationController.of(context).playYou;
+    });
 
     await _flutterSound.startPlayer( _lastRecordFile );
 
@@ -339,7 +350,7 @@ class _HomePageState extends State<HomePage> {
   void _openConfigAndWait() async {
     // close the db connection
     if (_configProvider != null) {
-      _configProvider.close();
+      _configProvider.close(true);
     }
 
     await Navigator.pushNamed(context, '/config');
@@ -350,6 +361,10 @@ class _HomePageState extends State<HomePage> {
 
   void _loadConfig() {
     _configProvider.getAllConfig().then((List<Config> configList) {
+
+      // tts must be recreated to set callback again
+      _initTTSController();
+
       if (configList != null) {
         for (Config item in configList) {
           switch (item.code) {
@@ -370,6 +385,15 @@ class _HomePageState extends State<HomePage> {
         _openConfigAndWait();
       }
     });
+  }
+
+  void _initTTSController() {
+    if (_ttsController != null) {
+      _ttsController = null;
+    }
+
+    _ttsController = new TtsController(statusCallback: _statusCallback);
+    _ttsController.initTts();
   }
 
   void _initConfigDataBase() {

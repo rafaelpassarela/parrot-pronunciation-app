@@ -41,11 +41,6 @@ class _ConfigPageState extends State<ConfigPage> {
   void initState() {
     super.initState();
 
-    _configProvider = new ConfigProvider();
-    _configProvider.open().then((dynamic) {
-      _loadValues();
-    });
-
     _ttsController.initTts();
     _ttsController.getLanguages().then((dynamic value) {
       _availableLanguages = new List<String>();
@@ -70,60 +65,64 @@ class _ConfigPageState extends State<ConfigPage> {
         });
       });
     }
+
+    _configProvider = new ConfigProvider();
+    _configProvider.open().then((dynamic) {
+      _loadAllValues();
+    });
   }
 
   @override
   void deactivate() {
     if (_configProvider != null) {
-      _configProvider.close();
+      _configProvider.close(true);
     }
     super.deactivate();
   }
 
-  void _loadValues() {
-    // load speak language
-    _configProvider.getConfig(CONFIG_SPK_LANG).then((Config config) {
-      String value;
-      if (config != null) {
-        value = config.value;
-        _selectedLanguage.id = config.id;
+  void _loadAllValues() {
+    _configProvider.getAllConfig().then((List<Config> configList) {
+      // set default values, and do not refresh the state
+      String spkLang;
+      String myLang;
+      String voice;
+
+      if (configList != null) {
+        for (Config item in configList) {
+          switch (item.code) {
+            case CONFIG_SPK_LANG:
+              _selectedLanguage.id = item.id;
+              spkLang = item.value;
+              break;
+
+            case CONFIG_MY_LANG:
+              _mySelectedLanguage.id = item.id;
+              myLang = item.value;
+              break;
+
+            case CONFIG_VOICE:
+              _selectedVoice.id = item.id;
+              voice = item.value;
+              break;
+          }
+        }
       }
 
-      if (_selectedLanguage.value != value) {
-        setState(() {
-          _selectedLanguage.value = value;
-        });
-      }
-    });
+      if (spkLang == null && _availableLanguages.indexOf(DEF_SPK_LANG) > -1)
+        spkLang = DEF_SPK_LANG;
+      if (myLang == null && _availableLanguages.indexOf(DEF_MY_LANG) > -1)
+        myLang = DEF_MY_LANG;
+      if (voice == null && _availableVoices.indexOf(DEF_VOICE) > -1)
+        voice = DEF_VOICE;
 
-    // load my language
-    _configProvider.getConfig(CONFIG_MY_LANG).then((Config config) {
-      String value;
-      if (config != null) {
-        value = config.value;
-        _mySelectedLanguage.id = config.id;
-      }
-
-      if (_mySelectedLanguage.value != value) {
-        setState(() {
-          _mySelectedLanguage.value = value;
-        });
-      }
-    });
-
-    // load voice
-    _configProvider.getConfig(CONFIG_VOICE).then((Config config) {
-      String value;
-      if (config != null) {
-        value = config.value;
-        _selectedVoice.id = config.id;
-      }
-
-      if (_selectedVoice.value != value) {
-        setState(() {
-          _selectedVoice.value = value;
-        });
-      }
+      setState(() {
+        _selectedLanguage.value = spkLang;
+        _mySelectedLanguage.value = myLang;
+        _selectedVoice.value = voice;
+      });
+      _configProvider.insertOrUpdate(_selectedLanguage);
+      _configProvider.insertOrUpdate(_mySelectedLanguage);
+      _configProvider.insertOrUpdate(_selectedVoice);
     });
   }
 

@@ -85,6 +85,10 @@ CREATE TABLE IF NOT EXISTS $_tableConfig (
   }
 
   Future<List<Config>> getAllConfig() async {
+    if (!db.isOpen) {
+      await open();
+    }
+
     List<Map> maps = await db.query(
         _tableConfig,
         columns: [_columnId, _columnCode, _columnDescription, _columnValue],
@@ -103,5 +107,10 @@ CREATE TABLE IF NOT EXISTS $_tableConfig (
     return await db.delete(_tableConfig, where: '$_columnId = ?', whereArgs: [id]);
   }
 
-  Future close() async => db.close();
+  Future close(bool wait) async {
+    if (wait)
+      await db.close();
+    else
+      db.close();
+  }
 }
