@@ -5,6 +5,7 @@ import 'package:parrot_pronunciation_app/pages/feedback.state.dart';
 import 'package:parrot_pronunciation_app/pages/home.state.dart';
 import 'package:parrot_pronunciation_app/pages/config.state.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
+import 'package:parrot_pronunciation_app/widgets/custom.color.dart';
 
 class MyApp extends StatelessWidget {
 
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       // title: LocalizationController.of(context).title,
       onGenerateTitle: (BuildContext context) => LocalizationController.of(context).appTitle,
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: mainAppColor,
       ),
       title: 'App Title',
       // Home property does not work with route

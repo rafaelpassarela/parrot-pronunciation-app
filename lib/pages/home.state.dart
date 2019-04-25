@@ -6,6 +6,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart';
 import 'package:parrot_pronunciation_app/database/config.controller.dart';
 import 'package:parrot_pronunciation_app/database/db.const.dart';
+import 'package:parrot_pronunciation_app/widgets/custom.color.dart';
 import 'package:parrot_pronunciation_app/widgets/tts.controller.dart';
 import 'package:parrot_pronunciation_app/widgets/circular.button.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
@@ -82,7 +83,7 @@ class _HomePageState extends State<HomePage> {
               CircularButton(
                 name: 'btnSpeechText',
                 onPressed: _speechText,
-                btnColor: Colors.green,
+                btnColor: mainAppColor,
                 icon: Icons.volume_up,
                 enabled: !_isSpeaking && !_isRecording && !_isPlaying,
               ),
@@ -94,7 +95,7 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 1,
-        fixedColor: Colors.green,
+        fixedColor: mainAppColor,
         onTap: _onItemTapped,
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -120,7 +121,7 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
           border: Border.all(
-            color: Colors.green,
+            color: mainAppColor,
             width: 2,
           ),
         ),
@@ -128,7 +129,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             Text(
                 LocalizationController.of(context).recordAudio,
-                style: TextStyle(color: Colors.green, fontSize: 12)
+                style: TextStyle(color: mainAppColor, fontSize: 12)
             ),
 //            Text( (_isRecording) ? '$_recordingTime' : '' ),
             Text(
@@ -160,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                   name: 'btnRecording',
                   onPressed: () => {},
                   icon: Icons.mic,
-                  btnColor: (_isRecording) ? Colors.red : Colors.green,
+                  btnColor: (_isRecording) ? Colors.red : mainAppColor,
                   size: (_isRecording) ? 50 : null,
                   enabled: !_isSpeaking && !_isPlaying,
                 ),
@@ -181,7 +182,7 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
           border: Border.all(
-            color: Colors.green,
+            color: mainAppColor,
             width: 2,
           ),
         ),
@@ -189,7 +190,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             Text(
                 LocalizationController.of(context).playAndCompare,
-                style: TextStyle(color: Colors.green, fontSize: 12)
+                style: TextStyle(color: mainAppColor, fontSize: 12)
             ),
             Text( '$_currentStatus'),
             Container(
@@ -197,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                 name: 'btnPlay',
                 onPressed: _playForCompare,
                 icon: Icons.forum,
-                btnColor: Colors.green,
+                btnColor: mainAppColor,
                 enabled: !_isSpeaking && !_isRecording && !_isPlaying,
               ),
             ),
@@ -319,7 +320,7 @@ class _HomePageState extends State<HomePage> {
         // maxLines = NULL: adds new lines when the current line reaches the line character limit
         maxLines: null,
         maxLength: 500,
-        cursorColor: Colors.green,
+        cursorColor: mainAppColor,
         controller: _textControllerInputWord,
         decoration: InputDecoration(
           labelText: LocalizationController.of(context).inputWord,
@@ -362,10 +363,11 @@ class _HomePageState extends State<HomePage> {
   void _loadConfig() {
     _configProvider.getAllConfig().then((List<Config> configList) {
 
-      // tts must be recreated to set callback again
-      _initTTSController();
-
       if (configList != null) {
+
+        // tts must be recreated to set callback again
+        _initTTSController();
+
         for (Config item in configList) {
           switch (item.code) {
             case CONFIG_VOICE:
@@ -382,7 +384,20 @@ class _HomePageState extends State<HomePage> {
           }
         }
       } else {
-        _openConfigAndWait();
+        // save default values and load again
+        _configProvider.insertOrUpdate(new Config(code: CONFIG_SPK_LANG, value: DEF_SPK_LANG, description: DESC_SPK_LANG));
+        _configProvider.insertOrUpdate(new Config(code: CONFIG_MY_LANG, value: DEF_MY_LANG, description: DESC_MY_LANG));
+        _configProvider.insertOrUpdate(new Config(code: CONFIG_VOICE, value: DEF_VOICE, description: DESC_VOICE));
+
+        // if no config, probably is the first time, request recording permissions
+        try {
+          _flutterSound.startRecorder(_getRecordFileName());
+        } finally {
+          _flutterSound.stopRecorder();
+        }
+        _loadConfig();
+
+//      _openConfigAndWait();
       }
     });
   }
