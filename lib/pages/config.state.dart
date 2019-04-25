@@ -21,19 +21,19 @@ class _ConfigPageState extends State<ConfigPage> {
   Config _selectedLanguage = new Config(
     id: null,
     code: CONFIG_SPK_LANG,
-    description: 'Speak Localization',
+    description: DESC_SPK_LANG,
     value: null,
   );
   Config _mySelectedLanguage = new Config(
     id: null,
     code: CONFIG_MY_LANG,
-    description: 'My Native Localization',
+    description: DESC_MY_LANG,
     value: null,
   );
   Config _selectedVoice = new Config(
     id: null,
     code: CONFIG_VOICE,
-    description: 'Selected Voice',
+    description: DESC_VOICE,
     value: null,
   );
 

@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:parrot_pronunciation_app/http/http.controller.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
 import 'package:parrot_pronunciation_app/widgets/circular.button.dart';
+import 'package:parrot_pronunciation_app/widgets/custom.color.dart';
 
 class FeedBackPage extends StatefulWidget {
   @override
@@ -52,7 +53,7 @@ class _FeedBackPageState extends State<FeedBackPage>{
     }
     return CircularButton(
       name: 'btnFeedback',
-      btnColor: Colors.green,
+      btnColor: mainAppColor,
       icon: Icons.send,
       onPressed: _sendFeedback,
       enabled: !_sending,
