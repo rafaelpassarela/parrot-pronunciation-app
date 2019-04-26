@@ -174,7 +174,7 @@ class _FeedBackPageState extends State<FeedBackPage>{
   }
 
   String _getUrl() {
-    return "http://mrrafael.ca/api/v1/sendcontact.php?'"
+    return "http://mrrafael.ca/api/v1/sendcontact.php?"
          + "id=05372adefd0093adf1fbcab0c2c6597de09f1376be";
   }
 }
