@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/android_encoder.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:parrot_pronunciation_app/database/config.controller.dart';
 import 'package:parrot_pronunciation_app/database/db.const.dart';
 import 'package:parrot_pronunciation_app/widgets/custom.color.dart';
@@ -133,10 +136,10 @@ class _HomePageState extends State<HomePage> {
             ),
 //            Text( (_isRecording) ? '$_recordingTime' : '' ),
             Text(
-                '$_recordingTime',
-                style: TextStyle(
-                    color: (_isRecording) ? Colors.red : null
-                ),
+              '$_recordingTime',
+              style: TextStyle(
+                  color: (_isRecording) ? Colors.red : null
+              ),
             ),
             Container(
               width: (_isRecording) ? 80 : null,
@@ -229,11 +232,18 @@ class _HomePageState extends State<HomePage> {
       _isRecording = true;
     });
 
-//    _flutterSound = new FlutterSound();
-    _lastRecordFile = await _flutterSound.startRecorder(_getRecordFileName());
+    int recTime = 0;
+    String fileName = await _getRecordFileName();
+    _lastRecordFile = await _flutterSound.startRecorder(
+      fileName,
+      sampleRate: 48000,
+      bitRate: 16,
+      androidEncoder: AndroidEncoder.HE_AAC,
+    );
 
     _recorderSubscription = _flutterSound.onRecorderStateChanged.listen((e) {
-      DateTime date = new DateTime.fromMillisecondsSinceEpoch(e.currentPosition.toInt());
+      recTime = e.currentPosition.toInt();
+      DateTime date = new DateTime.fromMillisecondsSinceEpoch(recTime);
 
 //      if (e.currentPosition.toInt() > 2500)
 //        print('PAUSE para o PRINT');
@@ -247,6 +257,9 @@ class _HomePageState extends State<HomePage> {
       // wait a bit
       await Future.delayed(Duration(milliseconds: 200));
     }
+
+    if (recTime < 500)
+      await Future.delayed(Duration(milliseconds: 500 - recTime));
 
     await _flutterSound.stopRecorder();
 
@@ -307,9 +320,9 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  String _getRecordFileName() {
-    return null;
-//    return 'Parrot_Recording' + ((Platform.isAndroid) ? '.mp4' : '.m4a');
+  Future<String> _getRecordFileName() async {
+    Directory tempDir = await getTemporaryDirectory();
+    return tempDir.path + '/parrot_audio' + ((Platform.isAndroid) ? '.mp4' : '.m4a');
   }
 
   Widget _buildInputTextField() {
@@ -337,7 +350,7 @@ class _HomePageState extends State<HomePage> {
 
     switch (index) {
       case 0:
-        // navigate and wait to return back
+      // navigate and wait to return back
         _openConfigAndWait();
         break;
       case 1:
@@ -391,7 +404,7 @@ class _HomePageState extends State<HomePage> {
 
         // if no config, probably is the first time, request recording permissions
         try {
-          _flutterSound.startRecorder(_getRecordFileName());
+          _flutterSound.startRecorder(null);
         } finally {
           _flutterSound.stopRecorder();
         }
