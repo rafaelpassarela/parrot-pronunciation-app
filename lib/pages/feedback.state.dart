@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
 import 'package:parrot_pronunciation_app/http/http.controller.dart';
 import 'package:parrot_pronunciation_app/localization/localization.dart';
 import 'package:parrot_pronunciation_app/widgets/circular.button.dart';
@@ -16,13 +17,13 @@ class _FeedBackPageState extends State<FeedBackPage>{
   TextEditingController _emailTextEditingController = new TextEditingController();
   TextEditingController _messageTextEditingController = new TextEditingController();
   bool _sending = false;
+  String _version = '';
   final FocusNode _nameFocus = new FocusNode();
   final FocusNode _emailFocus = new FocusNode();
   final FocusNode _messageFocus = new FocusNode();
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Text( LocalizationController.of(context).navbarFeedback ),
@@ -45,6 +46,17 @@ class _FeedBackPageState extends State<FeedBackPage>{
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      setState(() {
+        _version = packageInfo.version;
+      });
+    });
   }
 
   Widget _sendButton() {
@@ -109,7 +121,7 @@ class _FeedBackPageState extends State<FeedBackPage>{
     String json = '{'
         + '"name":"' + _nameTextEditingController.text + '",'
         + '"email":"' + _emailTextEditingController.text + '",'
-        + '"subject":"' + LocalizationController.of(context).appTitle + ' - Feedback",'
+        + '"subject":"' + LocalizationController.of(context).appTitle + ' v.$_version - Feedback",'
         + '"sendCopy":false,'
         + '"locale":1,'
         + '"message":"' + _messageTextEditingController.text + '"}';
@@ -166,4 +178,3 @@ class _FeedBackPageState extends State<FeedBackPage>{
          + "id=05372adefd0093adf1fbcab0c2c6597de09f1376be";
   }
 }
-

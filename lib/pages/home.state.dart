@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:package_info/package_info.dart';
 import 'package:parrot_pronunciation_app/database/config.controller.dart';
 import 'package:parrot_pronunciation_app/database/db.const.dart';
 import 'package:parrot_pronunciation_app/widgets/custom.color.dart';
@@ -40,12 +41,19 @@ class _HomePageState extends State<HomePage> {
   StreamSubscription<RecordStatus> _recorderSubscription;
   StreamSubscription<PlayStatus> _playerSubscription;
   String _currentStatus = '';
+  String _version = '';
 
   @override
   void initState() {
     super.initState();
 
     _initConfigDataBase();
+
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
+      setState(() {
+        _version = packageInfo.version;
+      });
+    });
   }
 
   @override
@@ -92,6 +100,9 @@ class _HomePageState extends State<HomePage> {
               ),
               _buildRecordingField(),
               _buildPlayField(),
+              Text('', style: TextStyle(fontSize: 18)),
+              Text(_version, style: TextStyle(color: mainAppColor, fontSize: 8))
+
             ],
           ),
         ),
